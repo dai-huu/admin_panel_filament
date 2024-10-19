@@ -2,11 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UsersResource\Pages;
-use App\Filament\Resources\UsersResource\RelationManagers;
-use App\Models\User;
+use App\Filament\Resources\CategoryResource\Pages;
+use App\Filament\Resources\CategoryResource\RelationManagers;
+use App\Models\Category;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,31 +15,26 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UsersResource extends Resource
+class CategoryResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    //protected static ?string $modelLabel = 'Danh mục sản phẩm';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('name')
-                    ->maxLength(50)
-                    ->required(),
-                TextInput::make('email')
-                    ->unique('users','email')
+                    ->unique('categories','name')
                     ->required()
-                    ->email(),
-                TextInput::make('password')
-                    ->minLength(8)
-                    ->password()
-                    ->visibleOn('create'),
-/*              Select::make('name')->options([
-                    'test go to database' => 'test as name to select in option',
-                    'utube go to database' => 'utube as name',
-                ]), */
+                    ->label('Category Name'),
+                TextInput::make('slug')
+                    ->required()
+                    ->unique('categories', 'slug')
+                    ->label('Slug'),
             ]);
     }
 
@@ -48,8 +42,8 @@ class UsersResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('email'),
+                TextColumn::make('name')->label('Category Name'),
+                TextColumn::make('slug')->label('Slug'),
             ])
             ->filters([
                 //
@@ -74,9 +68,9 @@ class UsersResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUsers::route('/create'),
-            'edit' => Pages\EditUsers::route('/{record}/edit'),
+            'index' => Pages\ListCategories::route('/'),
+            'create' => Pages\CreateCategory::route('/create'),
+            'edit' => Pages\EditCategory::route('/{record}/edit'),
         ];
     }
 }
